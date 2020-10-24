@@ -14,12 +14,50 @@ Button bButton(BUTTON_2_PIN);
 void setup() { Serial.begin(9600); }
 
 void loop() {
-  if (bButton.isPressed() || aButton.isPressed()) {
-    aLed.on();
-	  bLed.off();
+  if(aButton.getState() != aButton.getLastReading()) {
+    setLedOffTime(&aLed, &aButton);  
+  }  
+  if(bButton.getState() != bButton.getLastReading()) {
+    setLedOffTime(&bLed, &bButton);
   }
-  else {
+  
+  if(millis() % 1000 == 0) {
+//Serial.println(digitalRead(aButton.getPin()));
+//    Serial.println(aButton.getLastReading());
+//    Serial.println();
+  }
+  if(millis() < bLed.getOffTime()) {
     bLed.on();
-	  aLed.off();
+  } else {
+    bLed.off();
   }
+
+  if(millis() < aLed.getOffTime()) {
+    aLed.on();
+  } else {
+    aLed.off();
+  }
+  
+}
+
+void setLedOffTime(Led *led, Button *btn) {
+  // the button has been just pressed  
+  if (btn->getLastReading() == LOW) {
+    Serial.println("touched");
+      btn->setLastStart(millis());
+      btn->setDuration(0);
+  // the button has been just released
+  } else {
+    Serial.println("released");
+      btn->setLastEnd(millis());
+      btn->setDuration(btn->getLastEnd() - btn->getLastStart());
+      led->setOffTime(4+ btn->getDuration() + millis()); 
+  }  
+  Serial.println(millis());
+  
+  Serial.println(led->getOffTime());
+  
+  Serial.println("-------");
+  Serial.println();
+  Serial.println();
 }

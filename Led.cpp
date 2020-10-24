@@ -21,3 +21,17 @@ void Led::on() {
 int Led::getPin() {
   return pin;
 }
+
+void Led::setOnTime(int t) {
+  onTime = t;
+}
+int Led::getOnTime() {
+  return onTime;
+}
+    
+void Led::setOffTime(int t) {
+  offTime = t;
+}
+int Led::getOffTime() {
+  return offTime;
+}
