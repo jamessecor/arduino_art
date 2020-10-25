@@ -4,40 +4,58 @@
 #define LED_1_PIN 10
 #define LED_2_PIN 4
 #define BUTTON_1_PIN 12
-#define BUTTON_2_PIN 3
+#define BUTTON_2_PIN 7
+
+#define LED_A_PIN 0
+#define LED_B_PIN 3
+#define LED_C_PIN 5
 
 Led aLed(LED_1_PIN);
 Led bLed(LED_2_PIN);
 Button aButton(BUTTON_1_PIN);
 Button bButton(BUTTON_2_PIN);
 
-void setup() { Serial.begin(9600); }
+Led firstLed(LED_A_PIN);
+Led secondLed(LED_B_PIN);
+Led thirdLed(LED_C_PIN);
+
+int brightness = 0;
+int brightnessChangeAmt = 1;
+
+void setup() { 
+  Serial.begin(9600);
+}
 
 void loop() {
-  if(aButton.getState() != aButton.getLastReading()) {
-    setLedOffTime(&aLed, &aButton);  
-  }  
-  if(bButton.getState() != bButton.getLastReading()) {
-    setLedOffTime(&bLed, &bButton);
-  }
-  
-  if(millis() % 1000 == 0) {
-//Serial.println(digitalRead(aButton.getPin()));
-//    Serial.println(aButton.getLastReading());
-    Serial.println(millis());
-  }
-  if(bLed.getOnTime() < millis() && millis() < bLed.getOffTime()) {
-    bLed.on();
+  if (aButton.isPressed() || bButton.isPressed()) {
+    firstLed.off();
+    secondLed.off();
+    thirdLed.off();
   } else {
-    bLed.off();
+    analogWrite(firstLed.getPin(), brightness);
+    analogWrite(secondLed.getPin(), brightness);
+    analogWrite(thirdLed.getPin(), brightness);
+    if(millis() % 75 == 0) {
+      brightness += brightnessChangeAmt;  
+      Serial.println(brightness);
+    }    
+    if(brightness > 254) {
+      brightnessChangeAmt = -1;
+    } else if(brightness < 1) {
+      brightnessChangeAmt = 1;
+    }
   }
 
-  if(aLed.getOnTime() < millis() && millis() < aLed.getOffTime()) {
+  if (aButton.isPressed()) {
     aLed.on();
   } else {
     aLed.off();
   }
-  
+  if (bButton.isPressed()) {
+    bLed.on();
+  } else {
+    bLed.off();
+  } 
 }
 
 void setLedOffTime(Led *led, Button *btn) {
@@ -45,7 +63,7 @@ void setLedOffTime(Led *led, Button *btn) {
   if (btn->getLastReading() == LOW) {
     Serial.println("touched");
       btn->setLastStart(millis());
-      btn->setDuration(0);
+//      btn->setDuration(0);
       led->setOnTime(led->getDelayTime() + millis());
   // the button has been just released
   } else {
