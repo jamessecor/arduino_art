@@ -22,7 +22,7 @@ int Led::getPin() {
   return pin;
 }
 
-void Led::setOnTime(int t) {
+void Led::setOnTime(unsigned long t) {
 //  if(lastUsedIndex >= 0) {
 //    for(int i = 0; i < onTime.size /sizeof(int); i++) {
 //      onTime[i] = t;
@@ -33,17 +33,17 @@ void Led::setOnTime(int t) {
 //  }  
   onTime = t;
 }
-int Led::getOnTime() {
+unsigned long Led::getOnTime() {
   return onTime;
 }
     
-void Led::setOffTime(int t) {
+void Led::setOffTime(unsigned long t) {
   offTime = t;
 }
-int Led::getOffTime() {
+unsigned long Led::getOffTime() {
   return offTime;
 }
 
-int Led::getDelayTime() {
+unsigned long Led::getDelayTime() {
   return delayTime;
 }

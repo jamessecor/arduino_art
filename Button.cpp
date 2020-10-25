@@ -39,24 +39,24 @@ int Button::getLastReading() {
   return lastReading;
 }
 
-void Button::setLastStart(int start) {
+void Button::setLastStart(unsigned long start) {
   lastStart = start;
 }
-int Button::getLastStart() {
+unsigned long Button::getLastStart() {
   return lastStart;
 }
 
-void Button::setLastEnd(int endTime) {
+void Button::setLastEnd(unsigned long endTime) {
   lastEnd = endTime;
 }
-int Button::getLastEnd() {
+unsigned long Button::getLastEnd() {
   return lastEnd;
 }
 
-void Button::setDuration(int dur) {
+void Button::setDuration(unsigned long dur) {
   duration = dur;
 }
-int Button::getDuration() {
+unsigned long Button::getDuration() {
   return duration;
 }
 

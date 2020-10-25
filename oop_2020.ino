@@ -24,7 +24,7 @@ void loop() {
   if(millis() % 1000 == 0) {
 //Serial.println(digitalRead(aButton.getPin()));
 //    Serial.println(aButton.getLastReading());
-//    Serial.println();
+    Serial.println(millis());
   }
   if(bLed.getOnTime() < millis() && millis() < bLed.getOffTime()) {
     bLed.on();
@@ -58,7 +58,6 @@ void setLedOffTime(Led *led, Button *btn) {
   
   Serial.println(led->getOffTime());
   
-  Serial.println("-------");
   Serial.println();
   Serial.println();
 }
