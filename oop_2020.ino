@@ -26,13 +26,13 @@ void loop() {
 //    Serial.println(aButton.getLastReading());
 //    Serial.println();
   }
-  if(millis() < bLed.getOffTime()) {
+  if(bLed.getOnTime() < millis() && millis() < bLed.getOffTime()) {
     bLed.on();
   } else {
     bLed.off();
   }
 
-  if(millis() < aLed.getOffTime()) {
+  if(aLed.getOnTime() < millis() && millis() < aLed.getOffTime()) {
     aLed.on();
   } else {
     aLed.off();
@@ -46,12 +46,13 @@ void setLedOffTime(Led *led, Button *btn) {
     Serial.println("touched");
       btn->setLastStart(millis());
       btn->setDuration(0);
+      led->setOnTime(led->getDelayTime() + millis());
   // the button has been just released
   } else {
     Serial.println("released");
       btn->setLastEnd(millis());
       btn->setDuration(btn->getLastEnd() - btn->getLastStart());
-      led->setOffTime(4+ btn->getDuration() + millis()); 
+      led->setOffTime(led->getDelayTime() + btn->getDuration() + millis()); 
   }  
   Serial.println(millis());
   
