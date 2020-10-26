@@ -6,7 +6,7 @@
 #define BUTTON_1_PIN 12
 #define BUTTON_2_PIN 7
 
-#define LED_A_PIN 0
+#define LED_A_PIN 9
 #define LED_B_PIN 3
 #define LED_C_PIN 5
 
