@@ -15,12 +15,10 @@ Led bLed(LED_2_PIN);
 Button aButton(BUTTON_1_PIN);
 Button bButton(BUTTON_2_PIN);
 
-Led firstLed(LED_A_PIN);
-Led secondLed(LED_B_PIN);
-Led thirdLed(LED_C_PIN);
-
+Led transmittingLeds[3] = {Led(LED_A_PIN), Led(LED_B_PIN), Led(LED_C_PIN)};
 int brightness = 0;
 int brightnessChangeAmt = 1;
+int transmittingIndex = 0;
 
 void setup() { 
   Serial.begin(9600);
@@ -28,13 +26,25 @@ void setup() {
 
 void loop() {
   if (aButton.isPressed() || bButton.isPressed()) {
-    firstLed.off();
-    secondLed.off();
-    thirdLed.off();
+    if(millis() % 700 == 0) {
+      ++transmittingIndex;
+      if(transmittingIndex >= sizeof(transmittingLeds) / sizeof(transmittingLeds[0])) {
+        transmittingIndex = 0;
+      }
+    }
+    for(int i = 0; i < sizeof(transmittingLeds) / sizeof(transmittingLeds[0]); i++) { 
+      if(i == transmittingIndex) {
+        transmittingLeds[i].on();
+      } else {
+        transmittingLeds[i].off();
+      }
+    }
+    
   } else {
-    analogWrite(firstLed.getPin(), brightness);
-    analogWrite(secondLed.getPin(), brightness);
-    analogWrite(thirdLed.getPin(), brightness);
+    for(int i = 0; i < sizeof(transmittingLeds) / sizeof(transmittingLeds[0]); i++) {
+      analogWrite(transmittingLeds[i].getPin(), brightness);  
+    }
+    
     if(millis() % 75 == 0) {
       brightness += brightnessChangeAmt;  
       Serial.println(brightness);
