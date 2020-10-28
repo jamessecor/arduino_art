@@ -8,8 +8,8 @@ Button::Button(int buttonPin) {
 void Button::init() {
 	pinMode(pin, INPUT_PULLUP);
   for(int i = 0; i < Button::PRESSES; i++) {
-    onTime[i] = (unsigned long) -1;
-    offTime[i] = (unsigned long) -1;
+    onTime[i] = (unsigned long) 0;
+    offTime[i] = (unsigned long) 0;
   }
 	update();
 }
@@ -54,15 +54,15 @@ int Button::getPresses() {
 void Button::clearUsedTimes(unsigned long m) {
   for(int i = 0; i < Button::PRESSES; i++) {
     if(offTime[i] < m) {
-      onTime[i] = (unsigned long) -1;
-      offTime[i] = (unsigned long) -1;
+      onTime[i] = (unsigned long) 0;
+      offTime[i] = (unsigned long) 0;
     }
   }
 }
 void Button::setOnTime(unsigned long newOnTime) {
   clearUsedTimes(newOnTime);
   for(int i = 0; i < Button::PRESSES; i++) {
-    if(onTime[i] < 0) {
+    if(onTime[i] == 0) {
       onTime[i] = newOnTime;  
       break;
     }    
@@ -71,7 +71,7 @@ void Button::setOnTime(unsigned long newOnTime) {
 void Button::setOffTime(unsigned long newOffTime) {
   clearUsedTimes(newOffTime);
   for(int i = 0; i < Button::PRESSES; i++) {
-    if(offTime[i] < 0) {
+    if(offTime[i] == 0) {
       offTime[i] = newOffTime;  
       break;
     }    

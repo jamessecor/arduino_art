@@ -56,6 +56,7 @@ void loop() {
   counter++;
 
   // IF still transmitting, light it up (and around)
+//  if (aOn || bOn || aButton.isPressed() || bButton.isPressed()) {
   if (aOn || bOn) {
     if(counter % 2000 == 0) {
       transmittingIndex += transmittingDirection;
