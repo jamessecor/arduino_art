@@ -1,12 +1,16 @@
 #include "Button.h"
 
 Button::Button(int buttonPin) {
-	this->pin = buttonPin;	
-  init();
+	this->pin = buttonPin;
+	init();
 }
 
 void Button::init() {
 	pinMode(pin, INPUT_PULLUP);
+  for(int i = 0; i < Button::PRESSES; i++) {
+    onTime[i] = (unsigned long) -1;
+    offTime[i] = (unsigned long) -1;
+  }
 	update();
 }
 
@@ -39,27 +43,48 @@ int Button::getLastReading() {
   return lastReading;
 }
 
-void Button::setLastStart(unsigned long start) {
-  lastStart = start;
-}
-unsigned long Button::getLastStart() {
-  return lastStart;
-}
-
-void Button::setLastEnd(unsigned long endTime) {
-  lastEnd = endTime;
-}
-unsigned long Button::getLastEnd() {
-  return lastEnd;
-}
-
-void Button::setDuration(unsigned long dur) {
-  duration = dur;
-}
-unsigned long Button::getDuration() {
-  return duration;
-}
-
 bool Button::isPressed() {
   return (getState() == LOW);
+}
+
+int Button::getPresses() {
+  return PRESSES;
+}
+
+void Button::clearUsedTimes(unsigned long m) {
+  for(int i = 0; i < Button::PRESSES; i++) {
+    if(offTime[i] < m) {
+      onTime[i] = (unsigned long) -1;
+      offTime[i] = (unsigned long) -1;
+    }
+  }
+}
+void Button::setOnTime(unsigned long newOnTime) {
+  clearUsedTimes(newOnTime);
+  for(int i = 0; i < Button::PRESSES; i++) {
+    if(onTime[i] < 0) {
+      onTime[i] = newOnTime;  
+      break;
+    }    
+  }
+}    
+void Button::setOffTime(unsigned long newOffTime) {
+  clearUsedTimes(newOffTime);
+  for(int i = 0; i < Button::PRESSES; i++) {
+    if(offTime[i] < 0) {
+      offTime[i] = newOffTime;  
+      break;
+    }    
+  }
+}
+
+unsigned long Button::getOnTime(int index) {
+  return onTime[index];
+}
+unsigned long Button::getOffTime(int index) {
+  return offTime[index];
+}
+
+unsigned long Button::getDelayTime() {
+  return delayTime;
 }

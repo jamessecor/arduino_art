@@ -5,25 +5,27 @@ class Button {
     int pin;
   	int state;
   	int lastReading;
+    const static int PRESSES = 10;
+    unsigned long onTime[PRESSES] = {};
+    unsigned long offTime[PRESSES] = {};
+    unsigned long delayTime = (unsigned long) 0;
+    
   	unsigned long lastDebounceTime = 0;
-    unsigned long debounceDelay = 50;
-    unsigned long lastStart = 0;
-    unsigned long lastEnd = 0;
-    unsigned long duration = 0;
+    unsigned long debounceDelay = 5;
   public:
     Button(int buttonPin);
   	void init();
     int getPin();
-  	void off();
-  	void on();
     void update();
     int getState();
     int getLastReading();
-    void setLastStart(unsigned long start);
-    unsigned long getLastStart();
-    void setLastEnd(unsigned long endTime);
-    unsigned long getLastEnd();
-    void setDuration(unsigned long dur);
-    unsigned long getDuration();
     bool isPressed();
+
+    int getPresses();
+    void clearUsedTimes(unsigned long m);
+    void setOnTime(unsigned long newOnTime);
+    void setOffTime(unsigned long newOffTime);
+    unsigned long getOnTime(int index);
+    unsigned long getOffTime(int index);
+    unsigned long getDelayTime();
 };

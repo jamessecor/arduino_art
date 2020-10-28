@@ -29,15 +29,34 @@ int brightnessChangeAmt = 1;
 int transmittingIndex = 0;
 int transmittingDirection = 1;
 int counter = 0;
+bool aOn = false;
+bool bOn = false;
 
 void setup() { 
   Serial.begin(9600);
 }
 
 void loop() {
+  aOn = false;
+  bOn = false;
+  for(int i = 0; i < aButton.getPresses(); i++) {
+//    if (aButton.getOnTime(i) == 4294967295) { WTF
+    if (aButton.getOnTime(i) < millis() && aButton.getOffTime(i) > millis()) {
+      aOn = true;
+      break;
+    } 
+    if (bButton.getOnTime(i) < millis() && bButton.getOffTime(i) > millis()) {
+      bOn = true;
+      break;
+    } 
+  }  
+  aOn ? aLed.on() : aLed.off();
+  bOn ? bLed.on() : bLed.off();
+  
   counter++;
 
-  if (aButton.isPressed() || bButton.isPressed()) {
+  // IF still transmitting, light it up (and around)
+  if (aOn || bOn) {
     if(counter % 2000 == 0) {
       transmittingIndex += transmittingDirection;
       if(transmittingIndex <= 0 || transmittingIndex >= (sizeof(transmittingLeds) / sizeof(transmittingLeds[0]) - 1)) {
@@ -53,15 +72,13 @@ void loop() {
     }
     
   } else {
-    // Turn all on
+    // Fade all in and out
     for(int i = 0; i < sizeof(transmittingLeds) / sizeof(transmittingLeds[0]); i++) {
       analogWrite(transmittingLeds[i].getPin(), brightness);  
     }
     
     if(counter % 100 == 0) {
-      brightness += brightnessChangeAmt;  
-      Serial.println(brightness);
-//      Serial.println(brightnessChangeAmt);
+      brightness += brightnessChangeAmt;      
     }    
     if(brightness >= 254) {
       brightnessChangeAmt = -1;
@@ -70,36 +87,33 @@ void loop() {
     }
   }
 
-  if (aButton.isPressed()) {
-    aLed.on();
-  } else {
-    aLed.off();
-  }
-  if (bButton.isPressed()) {
-    bLed.on();
-  } else {
-    bLed.off();
+  // IF buttonState changes, update onTime and offTime
+  if (aButton.getState() != aButton.getLastReading()) {
+    setButtonTimes(&aButton);
+  } 
+  if (bButton.getState() != bButton.getLastReading()) {
+	  setButtonTimes(&bButton);
   } 
 }
 
-void setLedOffTime(Led *led, Button *btn) {
+void setButtonTimes(Button *btn) {
   // the button has been just pressed  
   if (btn->getLastReading() == LOW) {
-    Serial.println("touched");
-      btn->setLastStart(millis());
-//      btn->setDuration(0);
-      led->setOnTime(led->getDelayTime() + millis());
+    Serial.println("touched");    
+    btn->setOnTime(btn->getDelayTime() + millis());
+    Serial.println(btn->getOnTime(0));
+    Serial.println(btn->getOnTime(1));
+    Serial.println(btn->getOnTime(2));
+    Serial.println(btn->getOnTime(3));
+    Serial.println(btn->getOnTime(9));
+  } 
   // the button has been just released
-  } else {
+  else {
     Serial.println("released");
-      btn->setLastEnd(millis());
-      btn->setDuration(btn->getLastEnd() - btn->getLastStart());
-      led->setOffTime(led->getDelayTime() + btn->getDuration() + millis()); 
+    btn->setOffTime(btn->getDelayTime() + millis()); 
   }  
-  Serial.println(millis());
+//  Serial.println(millis());
   
-  Serial.println(led->getOffTime());
-  
-  Serial.println();
-  Serial.println();
+//  Serial.println();
+//  Serial.println();
 }
