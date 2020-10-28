@@ -40,7 +40,6 @@ void loop() {
   aOn = false;
   bOn = false;
   for(int i = 0; i < aButton.getPresses(); i++) {
-//    if (aButton.getOnTime(i) == 4294967295) { WTF
     if (aButton.getOnTime(i) < millis() && aButton.getOffTime(i) > millis()) {
       aOn = true;
       break;
@@ -102,19 +101,57 @@ void setButtonTimes(Button *btn) {
   if (btn->getLastReading() == LOW) {
     Serial.println("touched");    
     btn->setOnTime(btn->getDelayTime() + millis());
-    Serial.println(btn->getOnTime(0));
-    Serial.println(btn->getOnTime(1));
-    Serial.println(btn->getOnTime(2));
-    Serial.println(btn->getOnTime(3));
-    Serial.println(btn->getOnTime(9));
   } 
   // the button has been just released
   else {
     Serial.println("released");
     btn->setOffTime(btn->getDelayTime() + millis()); 
-  }  
-//  Serial.println(millis());
-  
-//  Serial.println();
-//  Serial.println();
+  }
+
+
+
+  Serial.println(millis() + btn->getDelayTime());
+  Serial.print("[");
+    Serial.print(btn->getOnTime(0));
+  Serial.print(", ");
+    Serial.print(btn->getOnTime(1));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(2));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(3));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(4));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(5));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(6));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(7));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(8));
+    Serial.print(", ");
+  Serial.print(btn->getOnTime(9));
+  Serial.println("]");
+
+	Serial.print("[");
+	Serial.print(btn->getOffTime(0));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(1));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(2));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(3));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(4));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(5));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(6));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(7));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(8));
+	Serial.print(", ");
+	Serial.print(btn->getOffTime(9));
+	Serial.println("]");
 }
