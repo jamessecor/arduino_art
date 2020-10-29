@@ -33,6 +33,7 @@ int transmittingDirection = 1;
 int counter = 0;
 bool aOn = false;
 bool bOn = false;
+unsigned long millisNow = 0;
 
 void setup() { 
   Serial.begin(9600);
@@ -43,28 +44,25 @@ void loop() {
   aOn = false;
   bOn = false;
   isTransmitting = false;
-  aButton.clearUsedTimes(millis());
-  bButton.clearUsedTimes(millis());
+  millisNow = millis();
 
   for(int i = 0; i < aButton.getPresses(); i++) {
     // Transmitting if any lighting still to happen
-    if (aButton.getOnTime(i) > 0 || bButton.getOnTime(i) > 0) {
+    if (aButton.getOnTime(i) > millisNow || bButton.getOnTime(i) > millisNow) {
       isTransmitting = true;
     }
-    if (aButton.getOnTime(i) < millis() && aButton.getOffTime(i) > millis()) {
+    if (aButton.getOnTime(i) <= millisNow && aButton.getOffTime(i) >= millisNow) {
       aOn = true;
       isTransmitting = true;            
-      break;
     } 
-    if (bButton.getOnTime(i) < millis() && bButton.getOffTime(i) > millis()) {
+    if (bButton.getOnTime(i) <= millisNow && bButton.getOffTime(i) >= millisNow) {
       bOn = true;
       isTransmitting = true;
-      break;
     } 
   }  
   aOn ? aLed.on() : aLed.off();
   bOn ? bLed.on() : bLed.off();
-  
+
   counter++;
 
   // IF still transmitting, light it up (and around)
