@@ -27,7 +27,7 @@ unsigned long Button::getUpdatedAt() {
     
 void Button::update() {
 
-  if((millis() - getUpdatedAt()) > 100) {
+  if((millis() - getUpdatedAt()) > 10) {
     // You can handle the debounce of the button directly
     // in the class, so you don't have to think about it
     // elsewhere in your code
@@ -64,9 +64,8 @@ int Button::getPresses() {
 }
 
 void Button::clearUsedTimes(unsigned long m) {
-  unsigned long mPlusDelay = m + getDelayTime();
   for(int i = 0; i < Button::PRESSES; i++) {
-    if(onTime[i] > 0 && onTime[i] < mPlusDelay && offTime[i] > 0 && offTime[i] < mPlusDelay) {
+    if((m + getDelayTime() - onTime[i] > getDelayTime()) || (offTime[i] > 0 && offTime[i] < m)) {
       onTime[i] = (unsigned long) 0;
       offTime[i] = (unsigned long) 0;
     }
@@ -76,7 +75,7 @@ void Button::setOnTime(unsigned long newOnTime) {
   clearUsedTimes(newOnTime);
   for(int i = 0; i < Button::PRESSES; i++) {
     if(onTime[i] == 0) {
-      onTime[i] = newOnTime;  
+      onTime[i] = newOnTime + getDelayTime();  
       break;
     }    
   }
@@ -85,7 +84,7 @@ void Button::setOffTime(unsigned long newOffTime) {
   clearUsedTimes(newOffTime);
   for(int i = 0; i < Button::PRESSES; i++) {
     if(offTime[i] == 0) {
-      offTime[i] = newOffTime;  
+      offTime[i] = newOffTime + getDelayTime();  
       break;
     }    
   }

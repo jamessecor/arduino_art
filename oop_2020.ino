@@ -26,6 +26,8 @@ Led transmittingLeds[6] = { Led(LED_A_PIN),
                             Led(LED_F_PIN) };
 int brightness = 5;
 int brightnessChangeAmt = 1;
+
+bool isTransmitting = false;
 int transmittingIndex = 0;
 int transmittingDirection = 1;
 int counter = 0;
@@ -34,18 +36,29 @@ bool bOn = false;
 
 void setup() { 
   Serial.begin(9600);
+  delay(500);
 }
 
 void loop() {
   aOn = false;
   bOn = false;
+  isTransmitting = false;
+  aButton.clearUsedTimes(millis());
+  bButton.clearUsedTimes(millis());
+
   for(int i = 0; i < aButton.getPresses(); i++) {
+    // Transmitting if any lighting still to happen
+    if (aButton.getOnTime(i) > 0 || bButton.getOnTime(i) > 0) {
+      isTransmitting = true;
+    }
     if (aButton.getOnTime(i) < millis() && aButton.getOffTime(i) > millis()) {
       aOn = true;
+      isTransmitting = true;            
       break;
     } 
     if (bButton.getOnTime(i) < millis() && bButton.getOffTime(i) > millis()) {
       bOn = true;
+      isTransmitting = true;
       break;
     } 
   }  
@@ -55,8 +68,7 @@ void loop() {
   counter++;
 
   // IF still transmitting, light it up (and around)
-//  if (aOn || bOn || aButton.isPressed() || bButton.isPressed()) {
-  if (aOn || bOn) {
+  if (isTransmitting) { // aOn || bOn
     if(counter % 2000 == 0) {
       transmittingIndex += transmittingDirection;
       if(transmittingIndex <= 0 || transmittingIndex >= (sizeof(transmittingLeds) / sizeof(transmittingLeds[0]) - 1)) {
@@ -100,16 +112,16 @@ void setButtonTimes(Button *btn) {
   // the button has been just pressed  
   if (btn->getLastReading() == LOW) {
     Serial.println("touched");    
-    btn->setOnTime(btn->getDelayTime() + millis());
+    btn->setOnTime(millis());
   } 
   // the button has been just released
   else {
     Serial.println("released");
-    btn->setOffTime(btn->getDelayTime() + millis()); 
+    btn->setOffTime(millis()); 
   }
 
 
-
+  Serial.println(millis());
   Serial.println(millis() + btn->getDelayTime());
   Serial.print("[");
     Serial.print(btn->getOnTime(0));

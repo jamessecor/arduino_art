@@ -4,12 +4,12 @@ class Button {
   private:
     int pin;
   	int state;
-  	int lastReading;
+  	int lastReading = HIGH;
     int updated_at;
     const static int PRESSES = 10;
     unsigned long onTime[PRESSES] = {};
     unsigned long offTime[PRESSES] = {};
-    unsigned long delayTime = (unsigned long) 5000;
+    unsigned long delayTime = (unsigned long) 2000;
     
   	unsigned long lastDebounceTime = 0;
     unsigned long debounceDelay = 15;
