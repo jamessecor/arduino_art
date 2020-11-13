@@ -12,18 +12,26 @@
 #define LED_D_PIN 6
 #define LED_E_PIN 11
 #define LED_F_PIN 10
+#define CONCURRENT_A_PIN 13
+
+Led concurrentLeds[1] = {
+  Led(CONCURRENT_A_PIN)
+};
 
 Led aLed(LED_1_PIN);
 Led bLed(LED_2_PIN);
 Button aButton(BUTTON_1_PIN);
 Button bButton(BUTTON_2_PIN);
 
-Led transmittingLeds[6] = { Led(LED_A_PIN), 
-                            Led(LED_B_PIN), 
-                            Led(LED_C_PIN),
-                            Led(LED_D_PIN),
-                            Led(LED_E_PIN),
-                            Led(LED_F_PIN) };
+Led transmittingLeds[5] = { 
+  Led(LED_A_PIN), 
+  Led(LED_B_PIN), 
+  //Led(LED_C_PIN),
+  Led(LED_D_PIN),
+  Led(LED_E_PIN),
+  Led(LED_F_PIN) 
+};
+
 int brightness = 5;
 int brightnessChangeAmt = 1;
 
@@ -60,14 +68,26 @@ void loop() {
       isTransmitting = true;
     } 
   }  
+  // Turn on phone lights
   aOn ? aLed.on() : aLed.off();
   bOn ? bLed.on() : bLed.off();
 
+  // Turn on concurrent lights
+  if (aButton.getLastReading() == LOW || bButton.getLastReading() == LOW) {
+    for(int i = 0; i < (sizeof(concurrentLeds) / sizeof(Led)); i++) {
+      concurrentLeds[i].on();
+    }
+  } else {
+    for(int i = 0; i < (sizeof(concurrentLeds) / sizeof(Led)); i++) {
+      concurrentLeds[i].off();
+    }
+  }
+  
   counter++;
 
   // IF still transmitting, light it up (and around)
   if (isTransmitting) { // aOn || bOn
-    if(counter % 2000 == 0) {
+    if(counter % 550 == 0) {
       transmittingIndex += transmittingDirection;
       if(transmittingIndex <= 0 || transmittingIndex >= (sizeof(transmittingLeds) / sizeof(transmittingLeds[0]) - 1)) {
         transmittingDirection *= -1;
@@ -80,14 +100,16 @@ void loop() {
         transmittingLeds[i].off();
       }
     }
-    
+    // Reset brightness to 5
+    brightness = 5;
+    brightnessChangeAmt = 1;
   } else {
     // Fade all in and out
     for(int i = 0; i < sizeof(transmittingLeds) / sizeof(transmittingLeds[0]); i++) {
       analogWrite(transmittingLeds[i].getPin(), brightness);  
     }
     
-    if(counter % 100 == 0) {
+    if(counter % 35 == 0) {
       brightness += brightnessChangeAmt;      
     }    
     if(brightness >= 254) {

@@ -9,7 +9,7 @@ class Button {
     const static int PRESSES = 10;
     unsigned long onTime[PRESSES] = {};
     unsigned long offTime[PRESSES] = {};
-    unsigned long delayTime = (unsigned long) 2000;
+    unsigned long delayTime = (unsigned long) 3000;
     
   	unsigned long lastDebounceTime = 0;
     unsigned long debounceDelay = 15;
