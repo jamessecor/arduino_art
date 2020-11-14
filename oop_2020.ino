@@ -61,11 +61,9 @@ void loop() {
     }
     if (aButton.getOnTime(i) <= millisNow && aButton.getOffTime(i) >= millisNow) {
       aOn = true;
-      isTransmitting = true;            
     } 
     if (bButton.getOnTime(i) <= millisNow && bButton.getOffTime(i) >= millisNow) {
       bOn = true;
-      isTransmitting = true;
     } 
   }  
   // Turn on phone lights
@@ -85,8 +83,22 @@ void loop() {
   
   counter++;
 
-  // IF still transmitting, light it up (and around)
-  if (isTransmitting) { // aOn || bOn
+  if (aOn || bOn) {
+    // Turn off all but the two involved
+    for(int i = 1; i < sizeof(transmittingLeds) / sizeof(transmittingLeds[0]) - 1; i++) { 
+      transmittingLeds[i].off();
+    }
+    if(counter % 950 == 0) {
+      if (transmittingLeds[0].getState()) {
+        transmittingLeds[0].off();
+        transmittingLeds[(sizeof(transmittingLeds) / sizeof(transmittingLeds[0])) - 1].on();
+      } else {
+        transmittingLeds[(sizeof(transmittingLeds) / sizeof(transmittingLeds[0])) - 1].off();
+        transmittingLeds[0].on();        
+      }
+    }
+  } else if (isTransmitting) {
+    // Button has been pressed, not yet transmitting
     if(counter % 550 == 0) {
       transmittingIndex += transmittingDirection;
       if(transmittingIndex <= 0 || transmittingIndex >= (sizeof(transmittingLeds) / sizeof(transmittingLeds[0]) - 1)) {
